@@ -18,7 +18,7 @@ const frequency = (sample, population) => sample.total_count ? 100 * sample[popu
 const cohortSamples = () => data.samples.filter((s) => s.condition === "melanoma" && s.treatment === "miraclib" && s.sample_type === "PBMC" && ["yes", "no"].includes(s.response));
 
 function layout(extra = {}) {
-  return {paper_bgcolor: "transparent", plot_bgcolor: "transparent", font: {family: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', size: 11, color: "#7e8fa6"}, margin: {l: 60, r: 25, t: 25, b: 50}, hoverlabel: {bgcolor: "#fff", bordercolor: "#e3eaf4", font: {size: 12, color: "#415a77"}}, ...extra};
+  return {paper_bgcolor: "transparent", plot_bgcolor: "transparent", font: {family: '"Helvetica Neue", Helvetica, Arial, sans-serif', size: 12, color: "#6c7b90"}, margin: {l: 60, r: 25, t: 25, b: 50}, hoverlabel: {bgcolor: "#fff", bordercolor: "#e7ecf3", font: {size: 12, color: "#17273f"}}, ...extra};
 }
 
 function metric(label, value, note, blue = false) {
@@ -38,6 +38,7 @@ function showView() {
   if (key === "response") renderResponse();
   if (key === "overview") renderOverview();
   if (key === "baseline") renderBaseline();
+  window.scrollTo(0, 0);
 }
 
 function renderResponse() {
@@ -68,8 +69,8 @@ function renderResponse() {
   const finding = significant.length
     ? `<strong>${significant.map((s) => LABELS[s.population]).join(" and ")} differ by response</strong> after correction for five tests. ${baseline ? "These baseline associations need independent validation before use for prediction." : "This comparison includes post-treatment visits. Use the baseline window to examine pretreatment associations."}`
     : `<strong>No population meets the adjusted 0.05 threshold</strong> in this time window. This does not establish that the groups are equivalent.`;
-  $("#finding").innerHTML = `<span class="finding-icon">i</span><div>${finding}</div>`;
-  $("#stats-table tbody").innerHTML = statistics.map((s, i) => `<tr><td><span class="population-dot" style="background:${COLORS[i]}"></span>${LABELS[s.population]}</td><td>${number(s.mean_responders)}</td><td>${number(s.mean_nonresponders)}</td><td>${s.mean_difference_pp > 0 ? "+" : ""}${number(s.mean_difference_pp)} <span style="color:#97a5b7">(${number(s.ci_low)}, ${number(s.ci_high)})</span></td><td>${pvalue(s.p_value)}</td><td>${pvalue(s.p_holm)}</td><td>${s.p_holm == null ? '<span class="ns-tag">Insufficient data</span>' : s.significant ? '<span class="sig-tag">Significant</span>' : '<span class="ns-tag">Not significant</span>'}</td></tr>`).join("");
+  $("#finding").innerHTML = `<span class="finding-icon">Finding</span><div>${finding}</div>`;
+  $("#stats-table tbody").innerHTML = statistics.map((s, i) => `<tr><td><span class="population-dot" style="background:${COLORS[i]}"></span>${LABELS[s.population]}</td><td>${number(s.mean_responders)}</td><td>${number(s.mean_nonresponders)}</td><td>${s.mean_difference_pp > 0 ? "+" : ""}${number(s.mean_difference_pp)} <span style="color:#6c7b90">(${number(s.ci_low)}, ${number(s.ci_high)})</span></td><td>${pvalue(s.p_value)}</td><td>${pvalue(s.p_holm)}</td><td>${s.p_holm == null ? '<span class="ns-tag">Insufficient data</span>' : s.significant ? '<span class="sig-tag">Significant</span>' : '<span class="ns-tag">Not significant</span>'}</td></tr>`).join("");
   $("#stats-download").href = `downloads/${baseline ? "baseline" : "response"}_statistics.csv`;
 }
 
@@ -103,7 +104,7 @@ function renderOverview() {
   const available = filtered.filter((s) => s.total_count > 0);
   const means = data.populations.map((p) => available.length ? available.reduce((total, s) => total + frequency(s, p), 0) / available.length : 0);
   if (available.length) {
-    Plotly.react("composition-chart", [{type: "pie", labels: data.populations.map((p) => LABELS[p]), values: means, hole: 0.73, marker: {colors: COLORS, line: {color: "#fff", width: 3}}, textinfo: "none", sort: false, direction: "clockwise", hovertemplate: "%{label}<br>%{value:.2f}%<extra></extra>"}], layout({margin: {l: 10, r: 10, t: 20, b: 35}, showlegend: true, legend: {orientation: "h", x: 0.5, xanchor: "center", y: -0.12, font: {size: 10}}, annotations: [{text: `<b>${NUM.format(available.length)}</b><br><span style='font-size:10px'>samples</span>`, x: 0.5, y: 0.5, showarrow: false, font: {size: 25, color: "#38506e"}}]}), config);
+    Plotly.react("composition-chart", [{type: "pie", labels: data.populations.map((p) => LABELS[p]), values: means, hole: 0.73, marker: {colors: COLORS, line: {color: "#fff", width: 3}}, textinfo: "none", sort: false, direction: "clockwise", hovertemplate: "%{label}<br>%{value:.2f}%<extra></extra>"}], layout({margin: {l: 10, r: 10, t: 20, b: 35}, showlegend: true, legend: {orientation: "h", x: 0.5, xanchor: "center", y: -0.12, font: {size: 10}}, annotations: [{text: `<b>${NUM.format(available.length)}</b><br><span style='font-size:11px'>samples</span>`, x: 0.5, y: 0.5, showarrow: false, font: {size: 32, color: "#17273f"}}]}), config);
   } else emptyChart("composition-chart", "No samples with defined frequencies");
   const old = $("#selected-sample").value;
   $("#selected-sample").replaceChildren(...filtered.map((s) => new Option(`${s.sample} · ${s.subject}`, s.sample)));
@@ -143,7 +144,7 @@ function countList(selector, rows, labelKey, countKey, labels = {}) {
 
 function donut(id, rows, key, labels, colors, total) {
   if (!total) {emptyChart(id, "No eligible subjects"); return;}
-  Plotly.react(id, [{type: "pie", labels: rows.map((r) => labels[r[key]] || r[key]), values: rows.map((r) => r.subjects), hole: 0.78, textinfo: "none", sort: false, marker: {colors: rows.map((r) => colors[r[key]] || "#aab5c6"), line: {color: "#fff", width: 4}}, hovertemplate: "%{label}<br>%{value} subjects (%{percent})<extra></extra>"}], layout({showlegend: false, margin: {l: 20, r: 20, t: 15, b: 15}, annotations: [{text: `<b>${NUM.format(total)}</b><br><span style='font-size:10px'>subjects</span>`, x: 0.5, y: 0.5, showarrow: false, font: {size: 25, color: "#38506e"}}]}), config);
+  Plotly.react(id, [{type: "pie", labels: rows.map((r) => labels[r[key]] || r[key]), values: rows.map((r) => r.subjects), hole: 0.78, textinfo: "none", sort: false, marker: {colors: rows.map((r) => colors[r[key]] || "#aab5c6"), line: {color: "#fff", width: 4}}, hovertemplate: "%{label}<br>%{value} subjects (%{percent})<extra></extra>"}], layout({showlegend: false, margin: {l: 20, r: 20, t: 15, b: 15}, annotations: [{text: `<b>${NUM.format(total)}</b><br><span style='font-size:11px'>subjects</span>`, x: 0.5, y: 0.5, showarrow: false, font: {size: 32, color: "#17273f"}}]}), config);
 }
 
 function renderBaseline() {
