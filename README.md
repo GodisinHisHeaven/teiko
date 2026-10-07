@@ -2,9 +2,9 @@
 
 SQLite data pipeline and interactive dashboard for Loblaw Bio’s cell-count dataset.
 
-**[Local dashboard](http://localhost:8050)**
+**[Local dashboard](http://localhost:8050)** · **[Open in GitHub Codespaces](https://codespaces.new/GodisinHisHeaven/teiko)**
 
-GitHub publication is pending approval to upload the supplied subject-level dataset. No remote repository has been created. The complete dashboard runs locally using the commands below, and the included Codespaces configuration is ready for an authorized GitHub upload.
+The repository is private and includes the complete source dataset. Reviewers need repository access. The dashboard runs locally or inside Codespaces using the commands below. Public dashboard deployment is disabled.
 
 ## Run in Codespaces
 
