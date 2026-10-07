@@ -27,13 +27,13 @@ jobs:
           name: analysis-reports
           path: reports/
       - name: Upload dashboard
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.PUBLISH_DASHBOARD == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site/
 
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.PUBLISH_DASHBOARD == 'true'
     needs: verify
     runs-on: ubuntu-latest
     permissions:

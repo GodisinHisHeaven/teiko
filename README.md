@@ -2,7 +2,9 @@
 
 SQLite data pipeline and interactive dashboard for Loblaw Bio’s cell-count dataset.
 
-**[Open the dashboard](https://GodisinHisHeaven.github.io/teiko/)** · **[Open in GitHub Codespaces](https://codespaces.new/GodisinHisHeaven/teiko)**
+**[Local dashboard](http://localhost:8050)**
+
+GitHub publication is pending approval to upload the supplied subject-level dataset. No remote repository has been created. The complete dashboard runs locally using the commands below, and the included Codespaces configuration is ready for an authorized GitHub upload.
 
 ## Run in Codespaces
 
@@ -157,7 +159,7 @@ The dashboard contains:
 
 Plotly charts support hover, zoom and SVG export. The JavaScript library is served locally, so the dashboard does not need a chart CDN.
 
-The local Flask server opens **SQLite in read-only mode**. `data.json` and CSV downloads are calculated from that database, and its cached analysis refreshes when the database is replaced. The public GitHub Pages dashboard uses the same interface with a static JSON/CSV export created from SQLite by the pipeline. It updates when the GitHub Actions workflow on `main` succeeds; it does not run a Python server on Pages.
+The local Flask server opens **SQLite in read-only mode**. `data.json` and CSV downloads are calculated from that database, and its cached analysis refreshes when the database is replaced. The static build in `site/` uses the same interface with a JSON/CSV export created from SQLite by the pipeline. It can be hosted on GitHub Pages without a Python server. Public deployment requires approved dataset sharing, Pages configured to use GitHub Actions, and the repository variable `PUBLISH_DASHBOARD=true`. Deployment is disabled by default.
 
 Generated files are excluded from Git and can be reproduced with `make pipeline`:
 
@@ -181,6 +183,6 @@ Generated files are excluded from Git and can be reproduced with `make pipeline`
 make test
 ```
 
-Tests check every source metadata field and cell count against SQLite; frequency totals; exact cohort filters and counts; the broader B-cell calculation; distinct-subject counting; repeated-visit aggregation; Holm adjustment; deterministic inference; zero counts and missing responses; malformed-input handling; safe reloads; direct loader execution; and dashboard responses/exports. GitHub Actions runs setup, the complete pipeline and tests on Linux before deploying the dashboard.
+Tests check every source metadata field and cell count against SQLite; frequency totals; exact cohort filters and counts; the broader B-cell calculation; distinct-subject counting; repeated-visit aggregation; Holm adjustment; deterministic inference; zero counts and missing responses; malformed-input handling; safe reloads; direct loader execution; and dashboard responses/exports. GitHub Actions runs setup, the complete pipeline and tests on Linux. Dashboard deployment is a separate, explicitly enabled step after verification.
 
 Source: [cell-count.csv on Google Drive](https://drive.google.com/file/d/1eMfLCQBIqChy8FVej5yE-9h9UL7oTvVy/view). The committed file has SHA-256 `011373475d37417d4131d4a06efeb58df89c4adc76451a5efa48a535ed293c82`.
