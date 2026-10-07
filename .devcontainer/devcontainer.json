@@ -1,0 +1,9 @@
+{
+  "name": "Immune cell analysis",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "postCreateCommand": "make setup && make pipeline",
+  "forwardPorts": [8050],
+  "portsAttributes": {
+    "8050": {"label": "Immune cell dashboard", "onAutoForward": "openBrowser"}
+  }
+}
